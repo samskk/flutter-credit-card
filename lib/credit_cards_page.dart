@@ -1,3 +1,4 @@
+import 'package:credit_card_project/widget/card.dart';
 import 'package:flutter/material.dart';
 
 class CreditCardsPage extends StatelessWidget {
@@ -12,7 +13,7 @@ class CreditCardsPage extends StatelessWidget {
             _buildTitleSection(
                 title: "Payment Details",
                 subTitle: "How would you like to pay ?"),
-            _buildCreditCard(
+            buildCreditCard(
                 color: Color(0xFF090943),
                 cardExpiration: "08/2022",
                 cardHolder: "HOUSSEM SELMI",
