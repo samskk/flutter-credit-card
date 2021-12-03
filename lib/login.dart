@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:credit_card_project/api/api.dart';
 import 'package:credit_card_project/credit_cards_page.dart';
 import 'package:credit_card_project/credit_cards_stack.dart';
 import 'package:credit_card_project/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
@@ -14,10 +17,10 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    // final email = TextEditingController();
-    // final password = TextEditingController();
-    String email;
-    String password;
+    final email = TextEditingController();
+    final password = TextEditingController();
+    // String email;
+    // String password;
 
     // this below line is used to make notification bar transparent
     SystemChrome.setSystemUIOverlayStyle(
@@ -82,8 +85,8 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                         child: TextFormField(
-                          onSaved: (value) => email = value,
-                          //controller: email,
+                          // onSaved: (value) => email = value,
+                          controller: email,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                               hintText: 'Email',
@@ -127,8 +130,8 @@ class _LoginState extends State<Login> {
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                         child: TextFormField(
-                          onSaved: (value) => password = value,
-                          // controller: password,
+                          // onSaved: (value) => password = value,
+                          controller: password,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                             hintText: 'Password',
@@ -150,24 +153,31 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(50)),
                   margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: InkWell(
-                    onTap: () {
-                      // final response = loginUser(email, password);
-                      // print(response);
-                      // final snackbar = SnackBar(
-                      //   content: Text('Please try email login'),
-                      //   action: SnackBarAction(
-                      //     label: 'OK',
-                      //     onPressed: () {
-                      //       Scaffold.of(context).hideCurrentSnackBar();
-                      //     },
-                      //   ),
-                      // );
-                      // Scaffold.of(context).showSnackBar(snackbar);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CreditCsrdsStack()),
-                      );
+                    onTap: () async {
+                      var headers = {'Content-Type': 'application/json'};
+                      var request = http.Request(
+                          'POST',
+                          Uri.parse(
+                              'http://flutter-assignment-api.herokuapp.com/v1/auth/login'));
+                      request.body = json.encode(
+                          {"email": email.text, "password": password.text});
+                      request.headers.addAll(headers);
+
+                      http.StreamedResponse response = await request.send();
+
+                      if (response.statusCode == 200) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CreditCsrdsStack()),
+                        );
+                        print(await response.stream.bytesToString());
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: response.reasonPhrase +
+                                response.statusCode.toString());
+                        print(response.reasonPhrase);
+                      }
                     },
                     child: Center(
                         child: Text(

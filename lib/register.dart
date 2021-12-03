@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:credit_card_project/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:credit_card_project/login.dart';
 import 'package:http/http.dart';
@@ -14,13 +16,12 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
-    // final email = TextEditingController();
-    // final password = TextEditingController();
-    // final name = TextEditingController();
-    String email;
-    String password;
-    String name;
-
+    final email = TextEditingController();
+    final password = TextEditingController();
+    final name = TextEditingController();
+    // var email;
+    // var password;
+    // var name;
 
     // this below line is used to make notification bar transparent
     SystemChrome.setSystemUIOverlayStyle(
@@ -87,8 +88,8 @@ class _RegisterState extends State<Register> {
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                         child: TextFormField(
-                          onSaved: (value)=> email = value,
-                          // controller: email,
+                          // onSaved: (value) => email = value,
+                          controller: email,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                               hintText: 'Email',
@@ -134,8 +135,8 @@ class _RegisterState extends State<Register> {
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                         child: TextFormField(
-                          onSaved: (value) => name = value,
-                          // controller: name,
+                          // onSaved: (value) => name = value,
+                          controller: name,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                               hintText: 'Name',
@@ -179,8 +180,8 @@ class _RegisterState extends State<Register> {
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
                         child: TextFormField(
-                          onSaved: (value) => password = value,
-                          // controller: password,
+                          // onSaved: (value) => password = value,
+                          controller: password,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                             hintText: 'Password',
@@ -204,38 +205,36 @@ class _RegisterState extends State<Register> {
                   child: Center(
                     child: TextButton(
                       onPressed: () async {
-                        final response =
-                            createUser(name, email, password);
-                        print(response);
-                        final snackbar = SnackBar(
-                          content: Text('Please try email login'),
-                          action: SnackBarAction(
-                            label: 'OK',
-                            onPressed: () {
-                              Scaffold.of(context).hideCurrentSnackBar();
-                            },
-                          ),
-                        );
-                        Scaffold.of(context).showSnackBar(snackbar);
-                        // final response = await post(
-                        //   Uri.parse(AppUrl.register),
-                        //   body: jsonEncode(<String, String>{
-                        //     "name": name.text,
-                        //     "email": email.text,
-                        //     "password": password.text,
-                        //   }),
-                        // );
+                        print(name.text);
+                        try {
+                          var headers = {'Content-Type': 'application/json'};
+                          var request = http.Request(
+                              'POST',
+                              Uri.parse(
+                                  'http://flutter-assignment-api.herokuapp.com/v1/auth/register'));
+                          request.body = json.encode({
+                            "name": name.text,
+                            "email": email.text,
+                            "password": password.text
+                          });
+                          request.headers.addAll(headers);
 
-                        // if (response.statusCode == 200) {
-                        //   // If the server did return a 201 CREATED response,
-                        //   // then parse the JSON.
-                        //   //return User.fromJson(jsonDecode(response.body));
-                        //   print('hi');
-                        // } else {
-                        //   // If the server did not return a 201 CREATED response,
-                        //   // then throw an exception.
-                        //   throw Exception('Failed to create user.');
-                        // }
+                          http.StreamedResponse response = await request.send();
+                          print(response.statusCode);
+                          if (response.statusCode == 200) {
+                            Fluttertoast.showToast(msg: "account is created");
+                            print(await response.stream.bytesToString());
+                          } else {
+                            print(email);
+                            Fluttertoast.showToast(
+                              msg: response.reasonPhrase +
+                                  response.statusCode.toString(),
+                            );
+                            print(response.reasonPhrase);
+                          }
+                        } catch (e) {
+                          Fluttertoast.showToast(msg: e.toString());
+                        }
                       },
                       child: Text(
                         'Register',
