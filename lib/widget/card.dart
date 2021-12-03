@@ -1,3 +1,4 @@
+import 'package:credit_card_project/credit_card.dart';
 import 'package:flutter/material.dart';
 
 class buildCreditCard extends StatelessWidget {
@@ -76,7 +77,19 @@ class buildCreditCardClick extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: InkWell(
-        onDoubleTap: () {},
+        onDoubleTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CredtCatd(
+                cardExpiration: cardExpiration,
+                cardHolder: cardHolder,
+                cardNumber: cardNumber,
+                color: color,
+              ),
+            ),
+          );
+        },
         child: Container(
           height: 200,
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 22.0),
