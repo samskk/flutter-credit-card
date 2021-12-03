@@ -1,4 +1,6 @@
+import 'package:credit_card_project/api/api.dart';
 import 'package:credit_card_project/credit_cards_page.dart';
+import 'package:credit_card_project/credit_cards_stack.dart';
 import 'package:credit_card_project/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +14,10 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    final email = TextEditingController();
-    final password = TextEditingController();
+    // final email = TextEditingController();
+    // final password = TextEditingController();
+    String email;
+    String password;
 
     // this below line is used to make notification bar transparent
     SystemChrome.setSystemUIOverlayStyle(
@@ -77,8 +81,9 @@ class _LoginState extends State<Login> {
                         height: 50,
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                        child: TextField(
-                          controller: email,
+                        child: TextFormField(
+                          onSaved: (value) => email = value,
+                          //controller: email,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                               hintText: 'Email',
@@ -121,8 +126,9 @@ class _LoginState extends State<Login> {
                         height: 50,
                         margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                        child: TextField(
-                          controller: password,
+                        child: TextFormField(
+                          onSaved: (value) => password = value,
+                          // controller: password,
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                             hintText: 'Password',
@@ -145,10 +151,22 @@ class _LoginState extends State<Login> {
                   margin: EdgeInsets.fromLTRB(30, 0, 30, 0),
                   child: InkWell(
                     onTap: () {
+                      // final response = loginUser(email, password);
+                      // print(response);
+                      // final snackbar = SnackBar(
+                      //   content: Text('Please try email login'),
+                      //   action: SnackBarAction(
+                      //     label: 'OK',
+                      //     onPressed: () {
+                      //       Scaffold.of(context).hideCurrentSnackBar();
+                      //     },
+                      //   ),
+                      // );
+                      // Scaffold.of(context).showSnackBar(snackbar);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CreditCardsPage()),
+                            builder: (context) => CreditCsrdsStack()),
                       );
                     },
                     child: Center(
